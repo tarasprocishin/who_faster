@@ -12,19 +12,19 @@ class GameField extends React.Component {
         
     }
 
-async componentDidMount() {
-        let date = await fetch(URL + '/game-settings');
-        let json = await date.json();
+// async componentDidMount() {
+//         let date = await fetch(URL + '/game-settings');
+//         let json = await date.json();
 
-        this.setState({ date: json})
-    }
+//         this.setState({ date: json})
+//     }
 
 
   
 
     render() {
 
-        console.log(this.state.date)
+        // console.log(this.state.date)
         return(
             <h1>GameField</h1>
         )

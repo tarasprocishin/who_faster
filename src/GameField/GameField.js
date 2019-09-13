@@ -1,7 +1,6 @@
 import React from 'react';
 
 
-const URL = 'http://starnavi-frontend-test-task.herokuapp.com';
 
 class GameField extends React.Component {
     constructor() {

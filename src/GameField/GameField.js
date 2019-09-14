@@ -39,23 +39,28 @@ class GameField extends React.Component {
         })
     }
 
-    handleChange = (event) => {
+    handleChangeMode = (event) => {
         this.changeMode( event.target.value )
         this.setState({ complexity: event.target.value })
     }
 
+    handleChangeName = (event) => {
+        this.setState({ playerName: event.target.value })
+    }
+
     render() {
-        let { gameModes } = this.props;
-        let { gameMode, complexity } = this.state;
+        let { gameMode, complexity, playerName } = this.state;
 
 
-
+        console.log(playerName)
         return (
             <div>
                 <h1>GameField</h1>
                 <Form
                     complexity={complexity}
-                    handleChange={this.handleChange}
+                    playerName={playerName}
+                    handleChangeMode={this.handleChangeMode}
+                    handleChangeName={this.handleChangeName}
                 />
                 <Field
                     gameMode={gameMode}

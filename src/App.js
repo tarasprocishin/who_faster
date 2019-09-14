@@ -1,7 +1,7 @@
 import React from 'react';
 
 import GameField from './GameField/GameField';
-import WinnersBoard from './LeaderBoard/WinnersBoard';
+import WinnersBoard from './WinnersBoard/WinnersBoard';
 import getData from './servises/fetchData';
 
 
@@ -9,29 +9,31 @@ class App extends React.Component {
   constructor(){
     super()
     this.state = {
-      winners: {},
-      gameSeting: {},
+      winners: [],
+      gameModes: {},
       isLoaded: false
     }
   }
 
   async componentDidMount() {
-    let gameSeting = await getData('/game-settings');
+    let getGameModes = await getData('/game-settings');
     let getWinner = await getData('/winners');
     this.setState({
-      gameSeting: gameSeting, 
+      gameModes: getGameModes, 
       winners: getWinner,
       isLoaded: true
      })
   }
 
   render(){
-   let { winners, gameSeting, isLoaded } = this.state;
+   let { winners, gameModes, isLoaded } = this.state;
 
   if(isLoaded){
     return (
       <div className="App">
-          <GameField />
+          <GameField
+            gameModes={gameModes}
+          />
           <WinnersBoard
             winners={winners} 
           />

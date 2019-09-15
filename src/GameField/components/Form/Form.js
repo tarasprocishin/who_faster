@@ -1,14 +1,18 @@
 import React from 'react';
 
 function Form( props ) {
-    let { complexity, handleChangeMode, playerName, handleChangeName } = props;
+    let {
+        complexity,
+        handleChangeMode,
+        playerName,
+        handleChangeName,
+        handleSubmit } = props;
 
-    // let {}
     // console.log(easyMode, normalMode, hardMode )
     return(
-        <form>
+        <form  onSubmit={(event) => {handleSubmit(event)}}>
             <select value={complexity}  onChange={(event) => {handleChangeMode(event)}} >
-                <option value="select"   hidden>Please Choose...</option>
+                <option value=""   hidden>Please Choose...</option>
                 <option value="easy">Easy Mode</option>
                 <option value="normal">Normal Mode</option>
                 <option value="hard">Hard Mode</option>

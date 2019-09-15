@@ -8,11 +8,11 @@ function Form( props ) {
         handleChangeName,
         handleSubmit,
         play } = props;
-        
-        const statePlay = play ? "Restar game" : "play";
+
+
 
     return(
-        <form  onSubmit={(event) => {handleSubmit(event)}}>
+        <form   onSubmit={(event) => {handleSubmit(event)}}>
             <select value={complexity}  onChange={(event) => {handleChangeMode(event)}} >
                 <option value=""   hidden>Please Choose...</option>
                 <option value="easy">Easy Mode</option>
@@ -20,7 +20,8 @@ function Form( props ) {
                 <option value="hard">Hard Mode</option>
             </select>
             <input type='text' value={playerName} onChange={(event) => {handleChangeName(event)}} placeholder="Enter your name"></input>
-           <input type="submit" value={statePlay}/>
+            { play ? <button >Restar game</button> 
+                   : <button >play</button>}
         </form>
     )
 

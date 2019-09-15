@@ -13,7 +13,8 @@ class GameField extends React.Component {
             gameMode: this.props.gameModes.easyMode,
             play: false,
             playerName: '',
-            isWarning: false,
+            isWarnning: false,
+            table: [],
         }
     }
 
@@ -21,7 +22,6 @@ class GameField extends React.Component {
     changeMode = (complexity) => {
         let gameMode = {};
 
-        this.setState(() => {
             switch (complexity) {
                 case 'easy':
                     gameMode = this.props.gameModes.easyMode;
@@ -36,15 +36,22 @@ class GameField extends React.Component {
                     gameMode = this.props.gameModes.easyMode;
             }
 
-            return { gameMode: gameMode }
-        })
+          return gameMode;
+
     }
 
-
+    createTable = () => {
+        let  field = this.state.gameMode.field;
+        const table = [];
+        for(let i = 0; i < Math.pow(field, 2); i++){
+            table.push(<td key={i}></td>)
+        }
+        this.setState({table:table});
+    }
 
     handleChangeMode = (event) => {
-        this.changeMode( event.target.value );
-        this.setState({ complexity: event.target.value });
+        let gameMode = this.changeMode( event.target.value );
+        this.setState({ complexity: event.target.value, gameMode: gameMode }); 
     }
 
     handleChangeName = (event) => {
@@ -56,29 +63,37 @@ class GameField extends React.Component {
         this.setState({pointForWinn: point});
     }
 
-    isEmptyForm = () => {
-        let { complexity, playerName } = this.state;
-        complexity && playerName ? 
-        this.setState({play: true, isWarning: false}) 
-        :this.setState({isWarning: true});
-        
+    restarGame = (event) => {
+        event.target[0].disabled = false;
+        event.target[1].disabled = false; 
+        this.setState({play: false})
     }
 
-
+    isEmptyForm = (event) => {
+        let { complexity, playerName } = this.state;
+        if(complexity && playerName){
+            event.target[0].disabled = true;
+            event.target[1].disabled = true; 
+            this.setState({play: true, isWarnning: false}) 
+        }else{
+            this.setState({isWarnning: true});
+        }    
+    }
 
     handleSubmit = (event) => {
         this.getPointForWinn(this.state.gameMode.field);
-        this.isEmptyForm();
-        
+        this.isEmptyForm(event);
+        if(this.state.play) this.restarGame(event);
+        this.createTable();
         event.preventDefault()
     }
 
     render() {
-        let { gameMode, complexity, playerName, pointForWinn, play, isWarning } = this.state;
-        const warning = isWarning ? 
+        let { gameMode, complexity, playerName, pointForWinn, play, isWarnning, table } = this.state;
+        const warning = isWarnning ? 
        <p>Pleas, put your name and choose mode game </p>
         : null  
-        console.log(play)
+    
         return (
             <div>
                 <h1>GameField</h1>
@@ -95,6 +110,7 @@ class GameField extends React.Component {
                     gameMode={gameMode}
                     pointForWinn={pointForWinn}
                     play={play}
+                    table={table}
                 />
 
             </div>

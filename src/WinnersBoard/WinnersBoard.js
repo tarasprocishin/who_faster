@@ -3,7 +3,7 @@ import ItemWinner from './components/ItemWinner'
 
 function WinnersBoard(props) {
     let { winners } = props;
-    console.log(winners)
+    // console.log(winners)
     return(
         <div>
             <h1>WinnersBoard</h1>

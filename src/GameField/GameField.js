@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Form from './components/Form/Form';
 import Field from './components/Field/Field';
 // import Modal from './components/Modal/Modal';
@@ -14,10 +13,7 @@ class GameField extends React.Component {
             gameMode: this.props.gameModes.easyMode,
             play: false,
             playerName: '',
-            numbersComputer: 0,
-            numbersPlayer: 0,
-            play: false,
-            isWarnning: false,
+            isWarning: false,
         }
     }
 
@@ -63,8 +59,8 @@ class GameField extends React.Component {
     isEmptyForm = () => {
         let { complexity, playerName } = this.state;
         complexity && playerName ? 
-        this.setState({play: true, isWarnning: false}) 
-        :this.setState({isWarnning: true});
+        this.setState({play: true, isWarning: false}) 
+        :this.setState({isWarning: true});
         
     }
 
@@ -78,25 +74,27 @@ class GameField extends React.Component {
     }
 
     render() {
-        let { gameMode, complexity, playerName, pointForWinn, play, isWarnning } = this.state;
-        const worning = isWarnning ? 
+        let { gameMode, complexity, playerName, pointForWinn, play, isWarning } = this.state;
+        const warning = isWarning ? 
        <p>Pleas, put your name and choose mode game </p>
         : null  
-        console.log(isWarnning)
+        console.log(play)
         return (
             <div>
                 <h1>GameField</h1>
                 <Form
                     complexity={complexity}
                     playerName={playerName}
+                    play={play}
                     handleChangeMode={this.handleChangeMode}
                     handleChangeName={this.handleChangeName}
                     handleSubmit={this.handleSubmit}
                 />
-            {worning}
+                 {warning}
                 <Field
                     gameMode={gameMode}
                     pointForWinn={pointForWinn}
+                    play={play}
                 />
 
             </div>

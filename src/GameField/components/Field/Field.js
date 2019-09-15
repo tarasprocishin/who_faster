@@ -1,6 +1,6 @@
 import React from 'react';
-
 import Td from './Td/Td';
+import Counter from './Counter/Counter'
 import uuid from 'uuid/v4';
 import './Field.css';
 
@@ -8,7 +8,6 @@ class Field extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            whoTookPoint: null,
             pointsComputer: 0,
             pointsPlayer: 0,
         }
@@ -24,7 +23,10 @@ class Field extends React.Component {
             let tr = [];
             for (let i = 0; i < number; i++) {
                 tr.push(
-                < Td key={uuid()}/>
+                < Td 
+                key={uuid()}
+                
+                />
                 )
             }
             table.push(<tr key={uuid()}>{tr}</tr>)
@@ -33,13 +35,21 @@ class Field extends React.Component {
     }
 
     render() {
-        let { gameMode, pointForWinn } = this.props;
-        let { whoTookPoint,   } = this.state;
+        let { gameMode, pointForWinn, play } = this.props;
+        let { pointsComputer, pointsPlayer  } = this.state;
+
    
-        console.log(pointForWinn)
+        console.log(play)
         return (
             <div>
-                <p>The point is taken: {whoTookPoint}</p>
+                {play ?
+                 <Counter
+                    pointsComputer={pointsComputer}
+                    pointsPlayer={pointsPlayer}
+                    pointForWinn={pointForWinn}
+                />
+                : null }
+           
                 <table>
                     {this.createTable(gameMode.field)}
                 </table>

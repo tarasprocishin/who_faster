@@ -1,6 +1,7 @@
 import React from 'react';
 import Form from './components/Form/Form';
-import Field from './components/Field/Field';
+import Table from './components/Table/Table';
+
 // import Modal from './components/Modal/Modal';
 
 
@@ -14,7 +15,7 @@ class GameField extends React.Component {
             play: false,
             playerName: '',
             isWarnning: false,
-            table: [],
+            chooseTd: null,
         }
     }
 
@@ -40,14 +41,28 @@ class GameField extends React.Component {
 
     }
 
-    createTable = () => {
-        let  field = this.state.gameMode.field;
-        const table = [];
-        for(let i = 0; i < Math.pow(field, 2); i++){
-            table.push(<td key={i}></td>)
-        }
-        this.setState({table:table});
+    changeTd = (event) => {
+        // let table = this.state.table
+        // let td = table.map(el => {
+
+        //     if(el.id === event.target.id){
+        //       return  el.style.background = "red"
+        //     }
+        //     return el
+        // })
+        event.target.style.background = "red";
+        console.dir(event.target);
+    //    this.setState({table: td})
     }
+
+    // getTd = () => {
+    //     let { table } = this.state;
+    //     this.setState({style: 'red'})
+    //     console.log(table[0])
+
+    // }
+
+
 
     handleChangeMode = (event) => {
         let gameMode = this.changeMode( event.target.value );
@@ -83,16 +98,37 @@ class GameField extends React.Component {
     handleSubmit = (event) => {
         this.getPointForWinn(this.state.gameMode.field);
         this.isEmptyForm(event);
+        this.createTable()
         if(this.state.play) this.restarGame(event);
-        this.createTable();
+        setTimeout(() => {
+            this.chooseItem()
+        }, 1000);
         event.preventDefault()
     }
 
+    createTable = () => {
+        let  field = this.state.gameMode.field;
+        const table = [];
+        for(let i = 0; i < Math.pow(field, 2); i++){
+            table.push('')
+        }
+        this.setState({table:table});
+    }
+
+    chooseItem = () => {
+        let tabel = this.state.table;
+        this.setState({chooseTd: 0})
+    }
+
     render() {
-        let { gameMode, complexity, playerName, pointForWinn, play, isWarnning, table } = this.state;
+        let { chooseTd, style, gameMode, complexity, playerName, pointForWinn, play, isWarnning, table } = this.state;
+      
         const warning = isWarnning ? 
-       <p>Pleas, put your name and choose mode game </p>
-        : null  
+            <p>Pleas, put your name and choose mode game </p>
+            : null;
+  
+
+
     
         return (
             <div>
@@ -106,11 +142,12 @@ class GameField extends React.Component {
                     handleSubmit={this.handleSubmit}
                 />
                  {warning}
-                <Field
+                <Table
                     gameMode={gameMode}
                     pointForWinn={pointForWinn}
                     play={play}
                     table={table}
+                    chooseTd={chooseTd}
                 />
 
             </div>

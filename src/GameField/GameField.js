@@ -16,6 +16,8 @@ class GameField extends React.Component {
             playerName: '',
             isWarnning: false,
             chooseTd: null,
+            usedTds: [],
+
         }
     }
 
@@ -100,9 +102,9 @@ class GameField extends React.Component {
         this.isEmptyForm(event);
         this.createTable()
         if(this.state.play) this.restarGame(event);
-        setTimeout(() => {
+        setInterval(() => {
             this.chooseItem()
-        }, 1000);
+        }, 300);
         event.preventDefault()
     }
 
@@ -115,18 +117,42 @@ class GameField extends React.Component {
         this.setState({table:table});
     }
 
+    getRandomInt = (max) => {
+        return Math.floor(Math.random() * Math.floor(max));
+      }
+
     chooseItem = () => {
-        let tabel = this.state.table;
-        this.setState({chooseTd: 0})
+        let { gameMode, usedTds } = this.state;
+        this.setState(()=> {
+            let maxInt = Math.pow(gameMode.field, 2)
+            let useTd = this.getRandomInt(maxInt);
+         
+            for(let i = 0; i < maxInt; i++){
+                if(usedTds.length === maxInt)return;
+                if(usedTds.indexOf(useTd) !== -1){
+                    useTd=this.getRandomInt(maxInt);
+                    continue;
+                }
+                usedTds = usedTds.concat(useTd);
+                break;   
+            }
+            // console.log(usedTds.sort())
+            return{
+                chooseTd: useTd,
+                usedTds: usedTds,
+            }
+        })
+
     }
 
     render() {
-        let { chooseTd, style, gameMode, complexity, playerName, pointForWinn, play, isWarnning, table } = this.state;
+        let { usedTds, chooseTd, style, gameMode, complexity, playerName, pointForWinn, play, isWarnning, table } = this.state;
       
         const warning = isWarnning ? 
             <p>Pleas, put your name and choose mode game </p>
             : null;
-  
+        
+            console.log(usedTds.sort((a, b)=> a < b  ))
 
 
     
@@ -148,6 +174,7 @@ class GameField extends React.Component {
                     play={play}
                     table={table}
                     chooseTd={chooseTd}
+                    usedTds={usedTds}
                 />
 
             </div>

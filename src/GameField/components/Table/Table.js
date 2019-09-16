@@ -62,7 +62,7 @@ class Table extends React.Component {
     
  
     render() {
-        const { gameMode, pointForWinn, play, table, chooseTd  } = this.props;
+        const { gameMode, pointForWinn, play, table, chooseTd, usedTds  } = this.props;
         const { pointsComputer, pointsPlayer } = this.state;
         let htmlTable = [];
         if(play){
@@ -71,6 +71,7 @@ class Table extends React.Component {
                           key={index}
                           id={index} 
                           chooseTd={chooseTd}
+                          usedTds={usedTds}
                           >{el}</Td>
               })
     

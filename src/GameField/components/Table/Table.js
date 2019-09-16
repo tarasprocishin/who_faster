@@ -1,5 +1,5 @@
 import React from 'react';
-import Counter from './Counter/Counter'
+import Counter from '../Counter/Counter'
 import Td from './Td/Td';
 import uuid from 'uuid/v4';
 import './Table.css';
@@ -8,39 +8,27 @@ class Table extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            pointsComputer: 0,
-            pointsPlayer: 0,
-            table: [],
+
         }
     }
 
-    addPoint = (event) => {
-        let {pointsComputer, pointsPlayer } = this.state;
-        const { play } = this.props;
-        if(play){
-            pointsPlayer += 1;
-            let elId = +event.target.id // + приводить значення до числа
-            this.setState({pointsPlayer: pointsPlayer, chooseElId: elId});
-            
-        }
-    }
 
     // getkRandomTD = () => {
-       
+
     //     let td = Math.floor(Math.random() * Math.floor(max));
-        
+
     // }
 
-  chunckArray = (arr, chunkSize) => {
+    chunckArray = (arr, chunkSize) => {
         let index = 0;
         let arrlength = arr.length;
         let tempArr = [];
- 
+
         for (index = 0; index < arrlength; index += chunkSize) {
-           let myChynk = arr.slice(index, index + chunkSize);
-           tempArr.push(<tr key={uuid()}>{myChynk}</tr>);
+            let myChynk = arr.slice(index, index + chunkSize);
+            tempArr.push(<tr key={uuid()}>{myChynk}</tr>);
         }
- 
+
         return tempArr;
     }
 
@@ -51,7 +39,7 @@ class Table extends React.Component {
         for (let i = 0; i < number; i++) {
             let tr = [];
             for (let j = 0; j < number; j++) {
-                tr.push(<td key={id}></td> )
+                tr.push(<td key={id}></td>)
                 id++;
             }
             table.push(<tr key={uuid()}>{tr}</tr>)
@@ -59,42 +47,39 @@ class Table extends React.Component {
 
         return <table><tbody>{table}</tbody></table>;
     }
-    
- 
+
+
     render() {
-        const { gameMode, pointForWinn, play, table, chooseTd, usedTds  } = this.props;
-        const { pointsComputer, pointsPlayer } = this.state;
+        const {
+            gameMode,
+            play,
+            table,
+            chooseTd,
+            useTds,
+            cliked,
+            addPoint } = this.props;
+
         let htmlTable = [];
-        if(play){
+        //    console.log(useTds);
+        if (play) {
             let arrWithTd = table.map((el, index) => {
-                return  <Td
-                          key={index}
-                          id={index} 
-                          chooseTd={chooseTd}
-                          usedTds={usedTds}
-                          >{el}</Td>
-              })
-    
-             htmlTable = this.chunckArray(arrWithTd, gameMode.field); 
+                return <Td
+                    key={index}
+                    id={index}
+                    chooseTd={chooseTd}
+                    useTds={useTds}
+                    cliked={cliked}
+                    addPoint={addPoint}
+                >{el}</Td>
+            })
+
+            htmlTable = this.chunckArray(arrWithTd, gameMode.field);
         }
-   
+
         return (
             <div>
-                {play ?
-                 <Counter
-                    pointsComputer={pointsComputer}
-                    pointsPlayer={pointsPlayer}
-                    pointForWinn={pointForWinn}
-                    />
-                    : null }
- 
-                 {play ? 
-                   <table>
-                     <tbody>
-                        {htmlTable}
-                        </tbody>
-                    </table>
-                : this.createPlaseholderTable(gameMode.field)}
+                {play ? <table><tbody>{htmlTable}</tbody></table>
+                    : this.createPlaseholderTable(gameMode.field)}
             </div>
         )
     }

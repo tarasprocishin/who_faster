@@ -1,6 +1,7 @@
 import React from 'react';
 import Form from './components/Form/Form';
 import Table from './components/Table/Table';
+import Counter from './components/Counter/Counter';
 
 // import Modal from './components/Modal/Modal';
 
@@ -14,13 +15,16 @@ class GameField extends React.Component {
             gameMode: this.props.gameModes.easyMode,
             play: false,
             playerName: '',
+            table: [],
             isWarnning: false,
             chooseTd: null,
-            usedTds: [],
+            useTds: [],
+            cliked: [],
+            pointsComputer: 0,
+            pointsPlayer: 0,
 
         }
     }
-
 
     changeMode = (complexity) => {
         let gameMode = {};
@@ -43,29 +47,6 @@ class GameField extends React.Component {
 
     }
 
-    changeTd = (event) => {
-        // let table = this.state.table
-        // let td = table.map(el => {
-
-        //     if(el.id === event.target.id){
-        //       return  el.style.background = "red"
-        //     }
-        //     return el
-        // })
-        event.target.style.background = "red";
-        console.dir(event.target);
-    //    this.setState({table: td})
-    }
-
-    // getTd = () => {
-    //     let { table } = this.state;
-    //     this.setState({style: 'red'})
-    //     console.log(table[0])
-
-    // }
-
-
-
     handleChangeMode = (event) => {
         let gameMode = this.changeMode( event.target.value );
         this.setState({ complexity: event.target.value, gameMode: gameMode }); 
@@ -83,7 +64,14 @@ class GameField extends React.Component {
     restarGame = (event) => {
         event.target[0].disabled = false;
         event.target[1].disabled = false; 
-        this.setState({play: false})
+        this.setState({
+            play: false,
+            chooseTd: null,
+            useTds: [],
+            table: [],
+            cliked: [],
+            pointsComputer: 0,
+            pointsPlayer: 0, })
     }
 
     isEmptyForm = (event) => {
@@ -102,12 +90,19 @@ class GameField extends React.Component {
         this.isEmptyForm(event);
         this.createTable()
         if(this.state.play) this.restarGame(event);
-        setInterval(() => {
-            this.chooseItem()
-        }, 300);
+        this.startGame()
         event.preventDefault()
     }
 
+    startGame = () => {
+        let interval = setInterval(() => {
+            this.chooseItem(interval); 
+            this.addPointComputer(); 
+        }, 700);
+        
+        // this.state.gameMode.delay
+    }
+    
     createTable = () => {
         let  field = this.state.gameMode.field;
         const table = [];
@@ -121,39 +116,86 @@ class GameField extends React.Component {
         return Math.floor(Math.random() * Math.floor(max));
       }
 
-    chooseItem = () => {
-        let { gameMode, usedTds } = this.state;
+    chooseItem = (interval) => {
+        let { gameMode, useTds, play, chooseTd } = this.state;
+        let maxInt = Math.pow(gameMode.field, 2);
+        
+        
         this.setState(()=> {
-            let maxInt = Math.pow(gameMode.field, 2)
             let useTd = this.getRandomInt(maxInt);
-         
+
+            if(useTds.length === maxInt ){
+                return{ chooseTd: null, useTds: useTds.concat(null)}
+            } 
+            
             for(let i = 0; i < maxInt; i++){
-                if(usedTds.length === maxInt)return;
-                if(usedTds.indexOf(useTd) !== -1){
+                if(useTds.length === maxInt)return;
+                if(useTds.indexOf(useTd) !== -1){
                     useTd=this.getRandomInt(maxInt);
                     continue;
                 }
-                usedTds = usedTds.concat(useTd);
+                useTds = useTds.concat(useTd);
                 break;   
             }
-            // console.log(usedTds.sort())
+                console.log(useTds.length)
+            if( (useTds.length === maxInt + 1 && !chooseTd) || !play){
+                return clearInterval(interval)
+            }
+            
+            
             return{
                 chooseTd: useTd,
-                usedTds: usedTds,
+                useTds: useTds,
             }
         })
 
+      
+        
+    }
+    
+    
+    
+    addPointComputer = ()=>{
+        let { useTds, cliked } = this.state;
+        let points = useTds.length - cliked.length - 1;
+        this.setState({pointsComputer: points});
     }
 
+
+    addPoint = (event) => {
+        let { pointsPlayer, cliked, chooseTd } = this.state;
+        let Id = +event.target.id // + приводить значення до числа
+        if(cliked[cliked.length - 1] === Id)return;
+        if(chooseTd === Id ){
+            cliked = cliked.concat(Id);
+            pointsPlayer += 1;
+            this.setState({pointsPlayer: pointsPlayer, cliked: cliked });
+            
+        }
+
+    }
+
+
     render() {
-        let { usedTds, chooseTd, style, gameMode, complexity, playerName, pointForWinn, play, isWarnning, table } = this.state;
+        let { 
+            useTds, 
+            chooseTd, 
+            gameMode, 
+            complexity, 
+            playerName, 
+            pointForWinn, 
+            play, 
+            isWarnning, 
+            table,
+            cliked,
+            pointsComputer,
+            pointsPlayer } = this.state;
       
         const warning = isWarnning ? 
             <p>Pleas, put your name and choose mode game </p>
             : null;
         
-            console.log(usedTds.sort((a, b)=> a < b  ))
-
+            // console.log(useTds)
 
     
         return (
@@ -168,13 +210,26 @@ class GameField extends React.Component {
                     handleSubmit={this.handleSubmit}
                 />
                  {warning}
+
+                 {play ?
+                 <Counter
+                    pointsComputer={pointsComputer}
+                    pointsPlayer={pointsPlayer}
+                    pointForWinn={pointForWinn}
+                    />
+                    : null }
+
                 <Table
                     gameMode={gameMode}
                     pointForWinn={pointForWinn}
                     play={play}
                     table={table}
                     chooseTd={chooseTd}
-                    usedTds={usedTds}
+                    useTds={useTds}
+                    addPoint={this.addPoint}
+                    cliked={cliked}
+                    pointsComputer={pointsComputer}
+                    pointsPlayer={pointsPlayer}
                 />
 
             </div>

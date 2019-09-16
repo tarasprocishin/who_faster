@@ -2,7 +2,7 @@ import React from 'react';
 
 import GameField from './GameField/GameField';
 import WinnersBoard from './WinnersBoard/WinnersBoard';
-import getData from './servises/fetchData';
+import {getData} from './servises/fetchData';
 
 
 class App extends React.Component {

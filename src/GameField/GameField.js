@@ -2,6 +2,7 @@ import React from 'react';
 import Form from './components/Form/Form';
 import Table from './components/Table/Table';
 import Counter from './components/Counter/Counter';
+import { fetchWinner }  from '../servises/fetchData';
 
 // import Modal from './components/Modal/Modal';
 
@@ -22,6 +23,7 @@ class GameField extends React.Component {
             cliked: [],
             pointsComputer: 0,
             pointsPlayer: 0,
+            winner:'',
 
         }
     }
@@ -61,9 +63,9 @@ class GameField extends React.Component {
         this.setState({pointForWinn: point});
     }
 
-    restarGame = (event) => {
-        event.target[0].disabled = false;
-        event.target[1].disabled = false; 
+    restarGame = (el) => {
+        el[0].disabled = false;
+        el[1].disabled = false; 
         this.setState({
             play: false,
             chooseTd: null,
@@ -74,11 +76,11 @@ class GameField extends React.Component {
             pointsPlayer: 0, })
     }
 
-    isEmptyForm = (event) => {
+    isEmptyForm = (el) => {
         let { complexity, playerName } = this.state;
         if(complexity && playerName){
-            event.target[0].disabled = true;
-            event.target[1].disabled = true; 
+            el[0].disabled = true;
+            el[1].disabled = true; 
             this.setState({play: true, isWarnning: false}) 
         }else{
             this.setState({isWarnning: true});
@@ -87,17 +89,24 @@ class GameField extends React.Component {
 
     handleSubmit = (event) => {
         this.getPointForWinn(this.state.gameMode.field);
-        this.isEmptyForm(event);
+        this.isEmptyForm(event.target);
         this.createTable()
-        if(this.state.play) this.restarGame(event);
-        this.startGame()
+        if(this.state.play) this.restarGame(event.target);
+        this.startGame(event.target)
         event.preventDefault()
     }
 
-    startGame = () => {
+    startGame = (form) => {
         let interval = setInterval(() => {
             this.chooseItem(interval); 
             this.addPointComputer(); 
+            this.getWinner();
+            
+            if(this.state.winner){
+                fetchWinner(this.state.winner);
+                this.restarGame(form);
+            }
+            
         }, 700);
         
         // this.state.gameMode.delay
@@ -175,6 +184,22 @@ class GameField extends React.Component {
 
     }
 
+    getWinner = () => {
+       let {pointsComputer, pointsPlayer, pointForWinn} = this.state;
+       let isWinner;
+        if(pointsComputer > pointForWinn ){
+            isWinner = 'Computer';
+        }else if(pointsPlayer === pointsComputer === pointForWinn){
+            isWinner = "A draw";
+        }else if(pointsPlayer > pointForWinn){
+            isWinner = "Player";
+        }
+
+        this.setState({winner: isWinner})
+      
+    }
+
+
 
     render() {
         let { 
@@ -189,11 +214,14 @@ class GameField extends React.Component {
             table,
             cliked,
             pointsComputer,
-            pointsPlayer } = this.state;
+            pointsPlayer,
+            winner } = this.state;
       
         const warning = isWarnning ? 
             <p>Pleas, put your name and choose mode game </p>
             : null;
+
+        // const winnerAlert = winner ? <div>{winner}</div>:null;
         
             // console.log(useTds)
 
@@ -218,6 +246,7 @@ class GameField extends React.Component {
                     pointForWinn={pointForWinn}
                     />
                     : null }
+                    {/* {winnerAlert} */}
 
                 <Table
                     gameMode={gameMode}

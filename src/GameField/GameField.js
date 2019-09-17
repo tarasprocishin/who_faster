@@ -3,9 +3,9 @@ import Form from './components/Form/Form';
 import Table from './components/Table/Table';
 import Counter from './components/Counter/Counter';
 import { fetchWinner }  from '../servises/fetchData';
-
-// import Modal from './components/Modal/Modal';
-
+import Modal from './components/Modal/Modal';
+import { changeMode, getRandomInt } from './helpers';
+import './GameField.css';
 
 
 class GameField extends React.Component {
@@ -24,33 +24,12 @@ class GameField extends React.Component {
             pointsComputer: 0,
             pointsPlayer: 0,
             winner:'',
-
         }
     }
 
-    changeMode = (complexity) => {
-        let gameMode = {};
-
-            switch (complexity) {
-                case 'easy':
-                    gameMode = this.props.gameModes.easyMode;
-                    break;
-                case 'normal':
-                    gameMode = this.props.gameModes.normalMode;
-                    break;
-                case 'hard':
-                    gameMode = this.props.gameModes.hardMode;
-                    break;
-                default:
-                    gameMode = this.props.gameModes.easyMode;
-            }
-
-          return gameMode;
-
-    }
 
     handleChangeMode = (event) => {
-        let gameMode = this.changeMode( event.target.value );
+        let gameMode = changeMode( event.target.value, this.props.gameModes );
         this.setState({ complexity: event.target.value, gameMode: gameMode }); 
     }
 
@@ -73,7 +52,8 @@ class GameField extends React.Component {
             table: [],
             cliked: [],
             pointsComputer: 0,
-            pointsPlayer: 0, })
+            pointsPlayer: 0,
+            winner: '', })
     }
 
     isEmptyForm = (el) => {
@@ -100,16 +80,12 @@ class GameField extends React.Component {
         let interval = setInterval(() => {
             this.chooseItem(interval); 
             this.addPointComputer(); 
-            this.getWinner();
+            this.getWinner(interval);
             
             if(this.state.winner){
                 fetchWinner(this.state.winner);
-                this.restarGame(form);
-            }
-            
-        }, 700);
-        
-        // this.state.gameMode.delay
+            }           
+        }, this.state.gameMode.delay );  
     }
     
     createTable = () => {
@@ -121,17 +97,14 @@ class GameField extends React.Component {
         this.setState({table:table});
     }
 
-    getRandomInt = (max) => {
-        return Math.floor(Math.random() * Math.floor(max));
-      }
+
 
     chooseItem = (interval) => {
         let { gameMode, useTds, play, chooseTd } = this.state;
         let maxInt = Math.pow(gameMode.field, 2);
-        
-        
+               
         this.setState(()=> {
-            let useTd = this.getRandomInt(maxInt);
+            let useTd = getRandomInt(maxInt);
 
             if(useTds.length === maxInt ){
                 return{ chooseTd: null, useTds: useTds.concat(null)}
@@ -140,29 +113,24 @@ class GameField extends React.Component {
             for(let i = 0; i < maxInt; i++){
                 if(useTds.length === maxInt)return;
                 if(useTds.indexOf(useTd) !== -1){
-                    useTd=this.getRandomInt(maxInt);
+                    useTd = getRandomInt(maxInt);
                     continue;
                 }
                 useTds = useTds.concat(useTd);
                 break;   
             }
-                console.log(useTds.length)
+
             if( (useTds.length === maxInt + 1 && !chooseTd) || !play){
                 return clearInterval(interval)
             }
-            
             
             return{
                 chooseTd: useTd,
                 useTds: useTds,
             }
         })
-
-      
-        
+     
     }
-    
-    
     
     addPointComputer = ()=>{
         let { useTds, cliked } = this.state;
@@ -184,7 +152,7 @@ class GameField extends React.Component {
 
     }
 
-    getWinner = () => {
+    getWinner = (interval) => {
        let {pointsComputer, pointsPlayer, pointForWinn} = this.state;
        let isWinner;
         if(pointsComputer > pointForWinn ){
@@ -194,9 +162,9 @@ class GameField extends React.Component {
         }else if(pointsPlayer > pointForWinn){
             isWinner = "Player";
         }
-
         this.setState({winner: isWinner})
-      
+        
+        if(isWinner)return clearInterval(interval);
     }
 
 
@@ -218,17 +186,14 @@ class GameField extends React.Component {
             winner } = this.state;
       
         const warning = isWarnning ? 
-            <p>Pleas, put your name and choose mode game </p>
+            <p className="game_field__warning">Pleas, put your name and choose mode game </p>
             : null;
 
-        // const winnerAlert = winner ? <div>{winner}</div>:null;
-        
-            // console.log(useTds)
-
+        const winnerAlert = winner ? (<Modal winner={winner} />):null;
     
         return (
-            <div>
-                <h1>GameField</h1>
+            <div className="game_field">
+                <h1 className="game_field__title">Game Field</h1>
                 <Form
                     complexity={complexity}
                     playerName={playerName}
@@ -238,6 +203,7 @@ class GameField extends React.Component {
                     handleSubmit={this.handleSubmit}
                 />
                  {warning}
+                 {winnerAlert}
 
                  {play ?
                  <Counter
@@ -246,7 +212,6 @@ class GameField extends React.Component {
                     pointForWinn={pointForWinn}
                     />
                     : null }
-                    {/* {winnerAlert} */}
 
                 <Table
                     gameMode={gameMode}

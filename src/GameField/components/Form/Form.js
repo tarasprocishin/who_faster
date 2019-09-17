@@ -1,5 +1,5 @@
 import React from 'react';
-
+import './Form.css';
 function Form( props ) {
     let {
         complexity,
@@ -9,10 +9,8 @@ function Form( props ) {
         handleSubmit,
         play } = props;
 
-
-
     return(
-        <form   onSubmit={(event) => {handleSubmit(event)}}>
+        <form className='form'  id="inputSettings"  onSubmit={(event) => {handleSubmit(event)}}>
             <select value={complexity}  onChange={(event) => {handleChangeMode(event)}} >
                 <option value=""   hidden>Please Choose...</option>
                 <option value="easy">Easy Mode</option>

@@ -1,0 +1,21 @@
+.game_field__counter{
+    align-self: center;
+    margin-bottom: 40px;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.counter__points_for_win {
+    align-self: center;
+}
+
+.conter__curr_points {
+    /* align-self: center; */
+    display: flex;
+    justify-content: center;
+}
+
+.conter__curr_points p {
+    margin: 0 9%;
+}

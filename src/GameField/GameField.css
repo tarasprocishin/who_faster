@@ -1,0 +1,14 @@
+.game_field{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.game_field__title {
+    align-self: center;
+}
+
+.game_field__warning {
+    align-self: center;
+    color: red;
+}

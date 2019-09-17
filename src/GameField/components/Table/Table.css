@@ -1,3 +1,7 @@
+.game_field__table {
+    align-self: center;
+}
+
 table {
     border-collapse: collapse;
 }

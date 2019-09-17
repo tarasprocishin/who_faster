@@ -1,0 +1,5 @@
+.winners_board {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

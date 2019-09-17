@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './Modal.css';
 
 let modalRoot = document.getElementById('modal');
 
@@ -18,9 +19,15 @@ class Modal extends React.Component {
     }
     
     render() {
+
       return ReactDOM.createPortal(
-        <p>same text</p>,
-        this.el,
+        <div className="modal">
+           <div className="modal__alert">
+               {this.props.winner} win!
+           </div>
+           <button form="inputSettings" >Restar game</button> 
+       </div>,
+      this.el,
       );
     }
   }
